@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CourseWeaver</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>.tabs{display:flex;overflow-x:auto}.tab{flex:1;min-width:110px}</style>
+</head>
+<body>
+  <header class="topbar">
+    <div><strong>CourseWeaver</strong><span id="course-title">Study Desk</span></div>
+    <div id="status" class="status">正在检查资料...</div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <nav id="tabs" class="tabs" aria-label="Course material collections"></nav>
+      <div id="materials" class="materials"></div>
+    </aside>
+    <section class="workspace">
+      <div class="welcome" id="welcome">
+        <p id="course-subtitle" class="eyebrow">COURSE-GROUNDED LEARNING</p>
+        <h1>Learn deeply. Build the answer yourself.</h1>
+        <p>Select a course item or describe where you are stuck. Your tutor uses local course evidence, progressive hints, and feedback without completing assessed work for you.</p>
+        <div class="starters">
+          <button data-prompt="Help me make a study plan from the available course materials.">Study plan</button>
+          <button data-prompt="Quiz me on the first lesson, one question at a time.">Concept quiz</button>
+          <button data-prompt="Show me how to ask for assignment help without asking for the answer.">Ask for help</button>
+        </div>
+      </div>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <form id="chat-form" class="composer">
+        <textarea id="message" rows="2" placeholder="Describe what you are learning or paste your attempt..." required></textarea>
+        <button id="send" type="submit" title="Send" aria-label="Send">↑</button>
+      </form>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

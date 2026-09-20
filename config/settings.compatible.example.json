@@ -1,0 +1,17 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8143
+  },
+  "course_path": "examples/compiler-foundations",
+  "retrieval": {
+    "max_chunks": 6
+  },
+  "agent": {
+    "provider": "openai_compatible_chat",
+    "base_url": "http://127.0.0.1:1234/v1",
+    "api_key": "replace-me",
+    "model": "your-model-id",
+    "timeout_seconds": 120
+  }
+}

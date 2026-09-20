@@ -1,0 +1,50 @@
+# Secrets and local configuration
+config/settings.local.json
+config/*.secret.json
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Downloaded or generated course content (third-party/private data)
+course/
+courses/local/
+data/
+indexes/
+*.pdf
+*.ppt
+*.pptx
+*.doc
+*.docx
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# JavaScript tooling
+node_modules/
+dist/
+build/
+coverage/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+tmp/
+temp/
+

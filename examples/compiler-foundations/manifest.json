@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "course": {
+    "id": "compiler-foundations",
+    "title": "Compiler Foundations",
+    "subtitle": "A miniature example course pack for CourseWeaver",
+    "language": "en",
+    "license": "MIT"
+  },
+  "collections": [
+    {
+      "id": "lessons",
+      "title": "Lessons",
+      "items": [
+        {"id": "lesson-01", "title": "From Source Text to Tokens", "file": "lesson-01.md", "retrieval_enabled": true},
+        {"id": "lesson-02", "title": "Parsing Expressions", "file": "lesson-02.md", "retrieval_enabled": true}
+      ]
+    },
+    {
+      "id": "practice",
+      "title": "Practice",
+      "items": [
+        {"id": "practice-01", "title": "Token Design Exercise", "file": "practice-01.md", "retrieval_enabled": true}
+      ]
+    }
+  ]
+}

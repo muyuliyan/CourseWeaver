@@ -1,0 +1,26 @@
+[
+  {
+    "id": "lesson-01-1",
+    "source_id": "lesson-01",
+    "title": "From Source Text to Tokens",
+    "type": "lessons",
+    "page": 1,
+    "text": "From Source Text to Tokens A compiler usually begins by grouping characters into tokens. A token has a category, such as NUMBER, IDENTIFIER, or PLUS, and may preserve the original spelling as its lexeme. For the input total + 42, a lexer might emit IDENTIFIER(\"total\"), PLUS(\"+\"), and NUMBER(\"42\"). The lexer should prefer the longest valid match when token rules overlap. Whitespace is commonly discarded, but its source position can still be recorded for diagnostics."
+  },
+  {
+    "id": "lesson-02-1",
+    "source_id": "lesson-02",
+    "title": "Parsing Expressions",
+    "type": "lessons",
+    "page": 1,
+    "text": "Parsing Expressions A parser turns a token sequence into structure. Precedence determines which operator binds more tightly, while associativity resolves repeated operators at the same precedence level. For 1 + 2 * 3, multiplication binds more tightly than addition, so the tree represents 1 + (2 * 3). A recursive-descent parser can encode this by giving each precedence level its own function. Useful parser errors report the unexpected token, its source location, and a small set of expected token categories."
+  },
+  {
+    "id": "practice-01-1",
+    "source_id": "practice-01",
+    "title": "Token Design Exercise",
+    "type": "practice",
+    "page": 1,
+    "text": "Token Design Exercise Design token categories for a tiny calculator language containing decimal integers, names, +, -, *, /, parentheses, and assignment. Explain how your lexer handles count2, 12abc, ==, and an unknown character. Do not write a full lexer. Describe the rules, their priority, and two focused test cases."
+  }
+]
