@@ -92,6 +92,26 @@ To add a different API protocol, implement a provider with a `generate(instructi
 
 如需接入不同 API 协议，在 `providers.py` 中实现带有 `generate(instructions, prompt)` 方法的 provider，并在 `create_provider` 中注册。
 
+## Tutor role / 教师角色配置
+
+Agent connection settings and tutor behavior live in different files:
+
+- `config/settings.local.json` selects the model provider, API endpoint, API key, model, active `course_path`, and retrieval limit.
+- `<course_path>/tutor.md` defines the tutor's role, teaching style, response structure, and assignment-help boundary.
+
+Agent 的连接参数与教师行为分别保存在两个位置：
+
+- `config/settings.local.json`：配置模型平台、API 地址、API Key、模型、当前 `course_path` 和检索数量。
+- `<course_path>/tutor.md`：配置教师身份、教学风格、回答结构以及作业帮助边界。
+
+For the bundled example, edit `examples/compiler-foundations/tutor.md`. For a local CS143 pack configured as `"course_path": "courses/local/cs143"`, edit `courses/local/cs143/tutor.md`. Changes to the active `tutor.md` apply to the next chat request. Restart CourseWeaver after changing `settings.local.json`, including when switching `course_path`.
+
+使用内置示例时，修改 `examples/compiler-foundations/tutor.md`。如果本地 CS143 课程包配置为 `"course_path": "courses/local/cs143"`，则修改 `courses/local/cs143/tutor.md`。当前课程的 `tutor.md` 会在下一次对话请求时生效；修改 `settings.local.json`（包括切换 `course_path`）后需要重启 CourseWeaver。
+
+The tutor file is plain Markdown. A useful structure is `Role`, `Teaching behavior`, `Integrity boundary`, and `Response style`. Keep the integrity boundary when adapting the prompt for assignment-based courses.
+
+教师配置是普通 Markdown 文件，建议包含 `Role`、`Teaching behavior`、`Integrity boundary` 和 `Response style`。针对包含作业的课程调整提示词时，建议保留学术诚信边界。
+
 ## Course pack format / 课程包格式
 
 A course pack contains:
@@ -119,23 +139,15 @@ Set `course_path` in `config/settings.local.json` to that directory. The bundled
 
 在 `config/settings.local.json` 中将 `course_path` 指向新目录。内置索引器支持 UTF-8 Markdown 和纯文本；PDF 导入建议作为可选适配器实现，以保持核心零依赖。
 
-## Stanford CS143 and copyright / Stanford CS143 与版权
+## Trying Stanford CS143 / 使用 Stanford CS143 尝试
 
-Stanford CS143 can be a useful real-world course for trying CourseWeaver. The project author is also using this framework as a personal study companion while working through CS143. You can configure a private CS143 course pack to explore course-grounded explanations, progressive hints, and review workflows. This is a personal learning use case, not an official Stanford integration, affiliation, or endorsement.
+Stanford CS143 is a good real-world course for trying CourseWeaver, and the project author is also using the framework while studying it. You can download the materials you need from the [official CS143 page](https://web.stanford.edu/class/cs143/), build a local course pack under `courses/local/cs143/`, and point `course_path` to it. This lets you use the tutor for course-grounded explanations, progressive hints, and review without adding the course files to this repository.
 
-Stanford CS143 可以作为体验 CourseWeaver 的实际课程案例。项目作者本人也正在使用这个框架辅助学习 CS143。你可以在本地配置私有的 CS143 课程包，用来体验基于课程资料的讲解、渐进式提示和复盘流程。这只是个人学习场景，并非 Stanford 官方集成，也不代表与 Stanford 存在关联或获得其认可。
+Stanford CS143 很适合作为 CourseWeaver 的实际学习案例，项目作者本人也正在使用这个框架学习该课程。你可以从 [CS143 官方页面](https://web.stanford.edu/class/cs143/) 获取所需资料，在 `courses/local/cs143/` 下建立本地课程包，然后将 `course_path` 指向该目录。这样即可使用基于课程资料的讲解、渐进式提示和复盘功能，同时不需要把课程文件加入本仓库。
 
-This repository does **not** include Stanford CS143 lecture slides, assignments, solutions, or extracted text. Public availability on a website is not the same as permission to redistribute. CourseWeaver's MIT License cannot relicense third-party teaching materials.
+Course materials remain under their respective terms; this repository only provides the framework and example pack. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the short third-party materials note.
 
-本仓库**不包含** Stanford CS143 的讲义、作业、答案或抽取文本。网页可以公开访问，并不等同于允许第三方重新分发；CourseWeaver 的 MIT License 也不能覆盖第三方课程资料。
-
-For private study, a user may create a local course pack from materials they are authorized to download from the [official CS143 page](https://web.stanford.edu/class/cs143/). Keep that pack under `courses/local/` or `course/`; both are ignored by Git. Do not publish course files, generated text indexes, or solution material without explicit permission from the rights holder. Also follow the course's academic-integrity policy.
-
-个人学习时，用户可以从 [CS143 官方页面](https://web.stanford.edu/class/cs143/) 下载自己有权使用的资料并创建本地课程包。请将其放在 `courses/local/` 或 `course/` 下，这些路径已被 Git 忽略。未经权利人明确授权，不要发布课程文件、抽取后的文本索引或答案资料，同时应遵守课程的学术诚信政策。
-
-The default `examples/compiler-foundations` pack is an example course covered by the repository's MIT License. This README explains how CS143 may be used locally; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) records the repository's third-party rights boundary. Neither document grants permission to redistribute Stanford materials.
-
-默认的 `examples/compiler-foundations` 是示例课程，受仓库 MIT License 覆盖。本 README 说明如何在本地将 CS143 用作学习案例；[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 集中声明仓库与第三方资料之间的权利边界。两份文档都不构成对 Stanford 课程资料再分发的授权。
+课程资料仍遵循其各自的使用条款，本仓库只提供框架和示例课程包。简要的第三方资料说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## Repository layout / 仓库结构
 
