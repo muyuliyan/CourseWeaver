@@ -6,6 +6,11 @@ const form=document.querySelector('#chat-form');
 const input=document.querySelector('#message');
 const send=document.querySelector('#send');
 const tabs=document.querySelector('#tabs');
+const reader=document.querySelector('#reader');
+const readerTitle=document.querySelector('#reader-title');
+const readerMeta=document.querySelector('#reader-meta');
+const readerBody=document.querySelector('#reader-body');
+const readerClose=document.querySelector('#reader-close');
 
 function esc(text){const node=document.createElement('div');node.textContent=text;return node.innerHTML}
 function activeCollection(){return state.course.collections.find(item=>item.id===state.collection)||{items:[]}}
@@ -14,9 +19,38 @@ function renderTabs(){
   tabs.querySelectorAll('.tab').forEach(tab=>tab.onclick=()=>{tabs.querySelector('.active')?.classList.remove('active');tab.classList.add('active');state.collection=tab.dataset.tab;renderMaterials()});
 }
 function renderMaterials(){
-  materials.innerHTML=activeCollection().items.map(item=>`<button class="material" data-file="/materials/${encodeURI(item.file)}"><strong>${esc(item.title)}</strong><small>${esc(item.file.split('/').pop())}</small></button>`).join('');
-  materials.querySelectorAll('.material').forEach(button=>button.onclick=()=>window.open(button.dataset.file,'_blank'));
+  const items=activeCollection().items;
+  materials.innerHTML=items.map(item=>`<button class="material" data-file="/materials/${encodeURI(item.file)}"><strong>${esc(item.title)}</strong><small>${esc(item.file.split('/').pop())}</small></button>`).join('');
+  materials.querySelectorAll('.material').forEach((button,index)=>{button.onclick=()=>openMaterial(items[index],button)});
 }
+function renderDocument(text){
+  const slides=text.split('\f').map(s=>s.trim()).filter(Boolean);
+  if(!slides.length)return '<div class="reader-empty">No readable content.</div>';
+  return slides.map((slide,index)=>`<section class="reader-slide"><span class="reader-num">${index+1}</span><pre>${esc(slide)}</pre></section>`).join('');
+}
+async function openMaterial(item,button){
+  materials.querySelectorAll('.material.active').forEach(el=>el.classList.remove('active'));
+  button.classList.add('active');
+  readerTitle.textContent=item.title;
+  readerMeta.textContent=item.file;
+  reader.classList.add('open');
+  welcome.style.display='none';
+  readerBody.innerHTML='<div class="reader-empty">Loading…</div>';
+  try{
+    const response=await fetch(button.dataset.file);
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    readerBody.innerHTML=renderDocument(await response.text());
+    readerBody.scrollTop=0;
+  }catch(error){
+    readerBody.innerHTML=`<div class="reader-empty reader-error">${esc('Failed to load: '+error.message)}</div>`;
+  }
+}
+function closeReader(){
+  reader.classList.remove('open');
+  materials.querySelectorAll('.material.active').forEach(el=>el.classList.remove('active'));
+  if(!messages.children.length)welcome.style.display='';
+}
+readerClose.onclick=closeReader;
 function addMessage(role,text,sources=[]){
   welcome.style.display='none';messages.style.display='block';
   const item=document.createElement('article');item.className=`message ${role}`;item.textContent=text;

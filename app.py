@@ -119,6 +119,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def guess_type(self, path):
+        if path.lower().endswith((".txt", ".md")):
+            return "text/plain; charset=utf-8"
+        return super().guess_type(path)
+
     def do_GET(self):
         route = urlparse(self.path).path
         if route == "/api/course":

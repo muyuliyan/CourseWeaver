@@ -28,6 +28,16 @@
           <button data-prompt="Show me how to ask for assignment help without asking for the answer.">Ask for help</button>
         </div>
       </div>
+      <div id="reader" class="reader">
+        <header class="reader-head">
+          <div class="who">
+            <div class="reader-title" id="reader-title"></div>
+            <div class="reader-meta" id="reader-meta"></div>
+          </div>
+          <button id="reader-close" class="reader-close" title="Close" aria-label="Close">×</button>
+        </header>
+        <div class="reader-body" id="reader-body"></div>
+      </div>
       <div id="messages" class="messages" aria-live="polite"></div>
       <form id="chat-form" class="composer">
         <textarea id="message" rows="2" placeholder="Describe what you are learning or paste your attempt..." required></textarea>

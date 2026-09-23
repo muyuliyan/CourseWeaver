@@ -1,5 +1,11 @@
 import json
+import os
 import unittest
+from pathlib import Path
+
+os.environ["COURSEWEAVER_CONFIG"] = str(
+    Path(__file__).resolve().parent.parent / "config" / "settings.example.json"
+)
 
 import app
 from providers import OpenAICompatibleChatProvider, OpenAIResponsesProvider, create_provider
