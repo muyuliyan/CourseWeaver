@@ -10,7 +10,7 @@
   "agent": {
     "provider": "openai_compatible_chat",
     "base_url": "https://api.deepseek.com",
-    "api_key": "sk-2bc80b160efd4ecebb3eaad216c104cc",
+    "api_key": "replace-me",
     "model": "deepseek-flash",
     "timeout_seconds": 120
   }
