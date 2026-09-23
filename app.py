@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent
 STATIC = ROOT / "static"
 DEFAULT_SETTINGS = ROOT / "config" / "settings.example.json"
 LOCAL_SETTINGS = ROOT / "config" / "settings.local.json"
+DEFAULT_COURSE_PATH = "examples/compiler-foundations"
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_+-]{1,}|[\u4e00-\u9fff]{1,4}")
 
 
@@ -34,6 +35,8 @@ def load_settings() -> dict:
     agent = settings.setdefault("agent", {})
     server["host"] = os.environ.get("COURSEWEAVER_HOST", server.get("host", "127.0.0.1"))
     server["port"] = int(os.environ.get("COURSEWEAVER_PORT", server.get("port", 8143)))
+    if os.environ.get("COURSEWEAVER_COURSE_PATH"):
+        settings["course_path"] = os.environ["COURSEWEAVER_COURSE_PATH"]
     if os.environ.get("COURSEWEAVER_API_KEY"):
         agent["api_key"] = os.environ["COURSEWEAVER_API_KEY"]
     if os.environ.get("COURSEWEAVER_MODEL"):
@@ -42,7 +45,7 @@ def load_settings() -> dict:
 
 
 SETTINGS = load_settings()
-COURSE_ROOT = (ROOT / SETTINGS.get("course_path", "examples/compiler-foundations")).resolve()
+COURSE_ROOT = (ROOT / SETTINGS.get("course_path", DEFAULT_COURSE_PATH)).resolve()
 MANIFEST = COURSE_ROOT / "manifest.json"
 CHUNKS = COURSE_ROOT / "chunks.json"
 TUTOR = COURSE_ROOT / "tutor.md"

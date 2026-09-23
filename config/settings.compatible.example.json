@@ -3,15 +3,15 @@
     "host": "127.0.0.1",
     "port": 8143
   },
-  "course_path": "examples/compiler-foundations",
+  "course_path": "courses/local/cs143",
   "retrieval": {
     "max_chunks": 6
   },
   "agent": {
     "provider": "openai_compatible_chat",
-    "base_url": "http://127.0.0.1:1234/v1",
-    "api_key": "replace-me",
-    "model": "your-model-id",
+    "base_url": "https://api.deepseek.com",
+    "api_key": "sk-2bc80b160efd4ecebb3eaad216c104cc",
+    "model": "deepseek-flash",
     "timeout_seconds": 120
   }
 }

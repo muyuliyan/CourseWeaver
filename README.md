@@ -64,9 +64,9 @@ cp config/settings.example.json config/settings.local.json
 }
 ```
 
-Treat this file as a secret and restrict its filesystem permissions on shared machines. Environment variables remain available as optional deployment overrides: `COURSEWEAVER_CONFIG`, `COURSEWEAVER_API_KEY`, `COURSEWEAVER_MODEL`, `COURSEWEAVER_HOST`, and `COURSEWEAVER_PORT`.
+Treat this file as a secret and restrict its filesystem permissions on shared machines. Environment variables remain available as optional deployment overrides: `COURSEWEAVER_CONFIG`, `COURSEWEAVER_COURSE_PATH`, `COURSEWEAVER_API_KEY`, `COURSEWEAVER_MODEL`, `COURSEWEAVER_HOST`, and `COURSEWEAVER_PORT`. `COURSEWEAVER_COURSE_PATH` overrides the active `course_path` without editing JSON.
 
-请将该文件视为密钥文件，在多人共用的设备上限制其文件权限。环境变量仍可作为容器或部署环境的可选覆盖项，但不是日常使用的必要步骤。
+请将该文件视为密钥文件，在多人共用的设备上限制其文件权限。环境变量仍可作为容器或部署环境的可选覆盖项（例如用 `COURSEWEAVER_COURSE_PATH` 覆盖当前课程目录，无需修改 JSON），但不是日常使用的必要步骤。
 
 3. Start the application from any terminal. / 在任意终端启动。
 
@@ -135,15 +135,15 @@ Copy `examples/compiler-foundations`, edit its content and manifest, then rebuil
 python scripts/build_index.py path/to/my-course
 ```
 
-Set `course_path` in `config/settings.local.json` to that directory. The bundled indexer supports UTF-8 Markdown and text files. PDF ingestion should be implemented as an optional adapter so the core remains dependency-free.
+Set `course_path` in `config/settings.local.json` to that directory, or set the `COURSEWEAVER_COURSE_PATH` environment variable. The bundled indexer supports UTF-8 Markdown and text files. For PDF-based courses, convert handouts to UTF-8 text with an external tool such as `pdftotext` before building the index, so the core remains dependency-free.
 
-在 `config/settings.local.json` 中将 `course_path` 指向新目录。内置索引器支持 UTF-8 Markdown 和纯文本；PDF 导入建议作为可选适配器实现，以保持核心零依赖。
+在 `config/settings.local.json` 中将 `course_path` 指向新目录，或设置 `COURSEWEAVER_COURSE_PATH` 环境变量。内置索引器支持 UTF-8 Markdown 和纯文本；对于以 PDF 为主的课程，可先用 `pdftotext` 等外部工具转成 UTF-8 文本再建索引，以保持核心零依赖。
 
 ## Trying Stanford CS143 / 使用 Stanford CS143 尝试
 
-Stanford CS143 is a good real-world course for trying CourseWeaver, and the project author is also using the framework while studying it. You can download the materials you need from the [official CS143 page](https://web.stanford.edu/class/cs143/), build a local course pack under `courses/local/cs143/`, and point `course_path` to it. This lets you use the tutor for course-grounded explanations, progressive hints, and review without adding the course files to this repository.
+Stanford CS143 is a good real-world course for trying CourseWeaver, and the project author is also using the framework while studying it. You can download the materials you need from the [official CS143 page](https://web.stanford.edu/class/cs143/), build a local course pack under `courses/local/cs143/`, and point `course_path` to it. This lets you use the tutor for course-grounded explanations, progressive hints, and review without adding the course files to this repository. A typical local pack points `course_path` at `courses/local/cs143` in `config/settings.local.json`, or sets `COURSEWEAVER_COURSE_PATH=courses/local/cs143`, then restarts CourseWeaver.
 
-Stanford CS143 很适合作为 CourseWeaver 的实际学习案例，项目作者本人也正在使用这个框架学习该课程。你可以从 [CS143 官方页面](https://web.stanford.edu/class/cs143/) 获取所需资料，在 `courses/local/cs143/` 下建立本地课程包，然后将 `course_path` 指向该目录。这样即可使用基于课程资料的讲解、渐进式提示和复盘功能，同时不需要把课程文件加入本仓库。
+Stanford CS143 很适合作为 CourseWeaver 的实际学习案例，项目作者本人也正在使用这个框架学习该课程。你可以从 [CS143 官方页面](https://web.stanford.edu/class/cs143/) 获取所需资料，在 `courses/local/cs143/` 下建立本地课程包，然后将 `course_path` 指向该目录。这样即可使用基于课程资料的讲解、渐进式提示和复盘功能，同时不需要把课程文件加入本仓库。本地课程包通常把 `config/settings.local.json` 的 `course_path` 设为 `courses/local/cs143`，或设置 `COURSEWEAVER_COURSE_PATH=courses/local/cs143`，然后重启 CourseWeaver。
 
 Course materials remain under their respective terms; this repository only provides the framework and example pack. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the short third-party materials note.
 
