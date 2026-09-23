@@ -1,0 +1,4 @@
+interface:
+  display_name: "CourseWeaver Reader Design"
+  short_description: "Design a focused, readable course document workspace"
+  default_prompt: "Use $courseweaver-reader-design to redesign the CourseWeaver document reading experience."
