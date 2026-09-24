@@ -417,6 +417,35 @@ function closeTutor() {
   if (!workspace.classList.contains('reading')) workspace.classList.remove('chatting');
 }
 
+function tutorIsOpen() {
+  return workspace.classList.contains('reading')
+    ? workspace.classList.contains('tutor-open')
+    : workspace.classList.contains('chatting');
+}
+
+function toggleTutor() {
+  if (tutorIsOpen()) closeTutor();
+  else openTutor();
+}
+
+function handleTutorShortcut(event) {
+  if (event.ctrlKey && !event.altKey && !event.metaKey && event.code === 'Backquote') {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleTutor();
+    return true;
+  }
+  return false;
+}
+
+function bindPdfShortcut() {
+  try {
+    pdfFrame.contentWindow?.addEventListener('keydown', handleTutorShortcut, true);
+  } catch (_) {
+    // Native PDF viewers may isolate their internal document.
+  }
+}
+
 function toggleToc(force) {
   const open = force ?? !readerToc.classList.contains('open');
   readerToc.classList.toggle('open', open);
@@ -481,7 +510,7 @@ async function ask(text) {
 
 readerClose.onclick = () => closeReader();
 readerBack.onclick = () => closeReader({showMaterials: true});
-tutorToggle.onclick = () => workspace.classList.contains('tutor-open') ? closeTutor() : openTutor();
+tutorToggle.onclick = toggleTutor;
 tutorClose.onclick = closeTutor;
 tocToggle.onclick = () => toggleToc();
 typeToggle.onclick = () => {
@@ -495,10 +524,13 @@ pdfOpen.onclick = () => {
     window.open(`/materials/${encodeURI(displayFile)}`, '_blank', 'noopener');
   }
 };
+pdfFrame.addEventListener('load', bindPdfShortcut);
 libraryToggle.onclick = () => main.classList.toggle('show-materials');
 readerTop.onclick = () => readerScroll.scrollTo({top: 0, behavior: 'smooth'});
 readerScroll.addEventListener('scroll', updateReaderProgress, {passive: true});
 window.addEventListener('beforeunload', saveReadingPosition);
+
+document.addEventListener('keydown', handleTutorShortcut, true);
 
 document.addEventListener('click', event => {
   if (!typePanel.hidden && !typePanel.contains(event.target) && !typeToggle.contains(event.target)) {

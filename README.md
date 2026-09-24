@@ -9,6 +9,8 @@ CourseWeaver 是一个轻量、基于课程资料的学习 Agent 框架。它将
 - Course packs are data, not hard-coded UI: each course supplies a manifest, materials, an index, and a tutor prompt.
 - Agent access is configured in a local JSON file; shell-specific environment setup is not required.
 - Supports OpenAI Responses API and OpenAI-compatible Chat Completions endpoints.
+- Displays original course PDFs with the browser's native page, zoom, search, print, and download controls while retaining extracted text for retrieval.
+- Provides a focused reading workspace with a compact collection selector and an on-demand course tutor toggled with `Ctrl + \``.
 - Runs with Python's standard library on Windows, macOS, Linux, and containers.
 - Includes an MIT-licensed miniature compiler course as a safe example.
 - Keeps downloaded third-party materials, generated indexes, secrets, and local configuration out of Git.
@@ -16,6 +18,8 @@ CourseWeaver 是一个轻量、基于课程资料的学习 Agent 框架。它将
 - 课程以数据包形式加载，界面不再写死 Lectures 或 Assignments。
 - Agent 通过本地 JSON 配置接入，不要求使用 PowerShell 设置环境变量。
 - 支持 OpenAI Responses API 和兼容 OpenAI Chat Completions 的端点。
+- 可直接使用浏览器原生 PDF 阅读器查看课程原稿，同时保留抽取文本用于检索和引用。
+- 提供专注阅读界面、紧凑的资料分类选择器，以及可通过 `Ctrl + \`` 开关的课程导师。
 - 使用 Python 标准库，可运行于 Windows、macOS、Linux 和容器。
 - 内置采用 MIT 许可的微型编译器示例课程。
 - 第三方下载资料、生成索引、密钥和本机配置不会进入 Git。
@@ -80,6 +84,16 @@ python app.py
 Open <http://127.0.0.1:8143>. Stop the foreground server with `Ctrl+C`.
 
 浏览器访问 <http://127.0.0.1:8143>。前台运行时按 `Ctrl+C` 停止服务。
+
+## Reading workspace / 阅读工作区
+
+Choose a collection from the left sidebar, then open a course item. When an item defines `display_file`, CourseWeaver embeds the original PDF and uses the browser's native controls for page navigation, zoom, search, printing, and downloading. Items without `display_file` use the built-in Markdown/text reader.
+
+The desktop reader enters a focused layout that gives the document the available viewport. Select **Ask tutor** or press `Ctrl + \`` (the same physical key as `~`) to open the tutor above a PDF; press the shortcut again to close it. The shortcut also works when focus is inside the embedded PDF viewer. On narrow screens, the material list, document, and tutor appear as separate views to preserve usable reading space.
+
+在左侧选择资料分类并打开课程内容。配置了 `display_file` 的项目会直接嵌入原始 PDF，并使用浏览器自带的翻页、缩放、搜索、打印和下载功能；未配置 `display_file` 的项目则使用内置 Markdown/文本阅读器。
+
+桌面端进入资料后会切换到专注阅读布局。点击 **Ask tutor** 或按 `Ctrl + \``（与 `~` 相同的物理按键）可以在 PDF 上方打开导师，再按一次即可关闭；即使焦点位于嵌入的 PDF 查看器内，快捷键也能生效。窄屏设备会分别显示资料目录、文档和导师，以保留足够的阅读空间。
 
 ## Agent providers / Agent 供应商
 
