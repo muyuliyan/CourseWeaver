@@ -1,7 +1,9 @@
 import json
 import os
 import unittest
+import urllib.error
 from pathlib import Path
+from unittest.mock import patch
 
 os.environ["COURSEWEAVER_CONFIG"] = str(
     Path(__file__).resolve().parent.parent / "config" / "settings.example.json"
@@ -34,6 +36,17 @@ class CourseWeaverTests(unittest.TestCase):
         provider = create_provider({"provider": "openai_responses", "api_key": "replace-me"})
         with self.assertRaisesRegex(RuntimeError, "settings.local.json"):
             provider.generate("Tutor", "Question")
+
+    def test_provider_reports_connection_failures_clearly(self):
+        provider = create_provider({
+            "provider": "openai_compatible_chat",
+            "base_url": "https://agent.example/v1",
+            "api_key": "test-key",
+            "model": "test-model",
+        })
+        with patch("urllib.request.OpenerDirector.open", side_effect=urllib.error.URLError("refused")):
+            with self.assertRaisesRegex(RuntimeError, "Cannot connect to the agent API"):
+                provider.generate("Tutor", "Question")
 
     def test_tutor_policy_contains_integrity_boundary(self):
         policy = app.TUTOR.read_text(encoding="utf-8")

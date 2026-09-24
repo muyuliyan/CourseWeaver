@@ -15,7 +15,7 @@ const welcome = document.querySelector('#welcome');
 const form = document.querySelector('#chat-form');
 const input = document.querySelector('#message');
 const send = document.querySelector('#send');
-const tabs = document.querySelector('#tabs');
+const collectionSelect = document.querySelector('#collection-select');
 const reader = document.querySelector('#reader');
 const readerTitle = document.querySelector('#reader-title');
 const readerMeta = document.querySelector('#reader-meta');
@@ -29,6 +29,8 @@ const readerToc = document.querySelector('#reader-toc');
 const tocToggle = document.querySelector('#toc-toggle');
 const typeToggle = document.querySelector('#type-toggle');
 const typePanel = document.querySelector('#type-panel');
+const pdfFrame = document.querySelector('#pdf-frame');
+const pdfOpen = document.querySelector('#pdf-open');
 const tutorPanel = document.querySelector('#tutor-panel');
 const tutorToggle = document.querySelector('#tutor-toggle');
 const tutorClose = document.querySelector('#tutor-close');
@@ -47,19 +49,17 @@ function activeCollection() {
 }
 
 function renderTabs() {
-  tabs.replaceChildren();
-  state.course.collections.forEach((item, index) => {
-    const tab = make('button', `tab ${index === 0 ? 'active' : ''}`, item.title);
-    tab.type = 'button';
-    tab.dataset.tab = item.id;
-    tab.onclick = () => {
-      tabs.querySelector('.active')?.classList.remove('active');
-      tab.classList.add('active');
-      state.collection = item.id;
-      renderMaterials();
-    };
-    tabs.appendChild(tab);
+  collectionSelect.replaceChildren();
+  state.course.collections.forEach(item => {
+    const option = make('option', '', item.title);
+    option.value = item.id;
+    option.selected = item.id === state.collection;
+    collectionSelect.append(option);
   });
+  collectionSelect.onchange = () => {
+    state.collection = collectionSelect.value;
+    renderMaterials();
+  };
 }
 
 function renderMaterials() {
@@ -67,9 +67,10 @@ function renderMaterials() {
   activeCollection().items.forEach(item => {
     const button = make('button', 'material');
     button.type = 'button';
-    button.dataset.file = `/materials/${encodeURI(item.file)}`;
+    const displayFile = item.display_file || item.file;
+    button.dataset.file = `/materials/${encodeURI(displayFile)}`;
     button.dataset.materialId = item.id;
-    button.append(make('strong', '', item.title), make('small', '', item.file.split('/').pop()));
+    button.append(make('strong', '', item.title), make('small', '', displayFile.split('/').pop()));
     if (state.activeMaterial?.id === item.id) button.classList.add('active');
     button.onclick = () => openMaterial(item, button);
     materials.appendChild(button);
@@ -318,10 +319,15 @@ async function openMaterial(item, button) {
   materials.querySelectorAll('.material.active').forEach(element => element.classList.remove('active'));
   button.classList.add('active');
   state.activeMaterial = item;
+  const displayFile = item.display_file || item.file;
+  const isPdf = displayFile.toLowerCase().endsWith('.pdf');
   readerTitle.textContent = item.title;
-  readerMeta.textContent = `${activeCollection().title} · ${item.file}`;
+  readerMeta.textContent = `${activeCollection().title} · ${displayFile}`;
   tutorContext.textContent = item.title;
   workspace.classList.add('reading');
+  workspace.classList.toggle('pdf-reading', isPdf);
+  reader.classList.toggle('pdf-mode', isPdf);
+  pdfOpen.hidden = !isPdf;
   main.classList.remove('show-materials');
   toggleToc(false);
   typePanel.hidden = true;
@@ -332,6 +338,14 @@ async function openMaterial(item, button) {
   updateReaderProgress();
 
   try {
+    if (isPdf) {
+      const response = await fetch(button.dataset.file, {method: 'HEAD'});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      pdfFrame.title = item.title;
+      pdfFrame.src = `${button.dataset.file}#view=FitH&toolbar=1&navpanes=0`;
+      return;
+    }
+    pdfFrame.src = 'about:blank';
     const response = await fetch(button.dataset.file);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     renderDocument(await response.text(), item);
@@ -342,6 +356,9 @@ async function openMaterial(item, button) {
       readerScroll.focus({preventScroll: true});
     });
   } catch (error) {
+    workspace.classList.remove('pdf-reading');
+    reader.classList.remove('pdf-mode');
+    pdfOpen.hidden = true;
     const errorState = make('div', 'reader-empty reader-error');
     errorState.append(make('p', '', `Failed to load ${item.title}: ${error.message}`));
     const retry = make('button', 'toolbar-button', 'Retry');
@@ -355,7 +372,7 @@ async function openMaterial(item, button) {
 
 function closeReader({showMaterials = false} = {}) {
   saveReadingPosition();
-  workspace.classList.remove('reading', 'tutor-open');
+  workspace.classList.remove('reading', 'tutor-open', 'pdf-reading');
   tutorToggle.setAttribute('aria-expanded', 'false');
   materials.querySelectorAll('.material.active').forEach(element => element.classList.remove('active'));
   if (showMaterials && window.innerWidth <= 760) main.classList.add('show-materials');
@@ -469,6 +486,12 @@ typeToggle.onclick = () => {
   typePanel.hidden = !typePanel.hidden;
   typeToggle.classList.toggle('active', !typePanel.hidden);
   typeToggle.setAttribute('aria-expanded', String(!typePanel.hidden));
+};
+pdfOpen.onclick = () => {
+  if (state.activeMaterial) {
+    const displayFile = state.activeMaterial.display_file || state.activeMaterial.file;
+    window.open(`/materials/${encodeURI(displayFile)}`, '_blank', 'noopener');
+  }
 };
 libraryToggle.onclick = () => main.classList.toggle('show-materials');
 readerTop.onclick = () => readerScroll.scrollTo({top: 0, behavior: 'smooth'});

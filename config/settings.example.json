@@ -10,6 +10,7 @@
   "agent": {
     "provider": "openai_responses",
     "base_url": "https://api.openai.com/v1",
+    "use_system_proxy": false,
     "api_key": "replace-me",
     "model": "gpt-5-mini",
     "timeout_seconds": 120,

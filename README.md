@@ -56,6 +56,7 @@ cp config/settings.example.json config/settings.local.json
   "agent": {
     "provider": "openai_responses",
     "base_url": "https://api.openai.com/v1",
+    "use_system_proxy": false,
     "api_key": "your-api-key",
     "model": "gpt-5-mini",
     "timeout_seconds": 120,
@@ -65,6 +66,8 @@ cp config/settings.example.json config/settings.local.json
 ```
 
 Treat this file as a secret and restrict its filesystem permissions on shared machines. Environment variables remain available as optional deployment overrides: `COURSEWEAVER_CONFIG`, `COURSEWEAVER_COURSE_PATH`, `COURSEWEAVER_API_KEY`, `COURSEWEAVER_MODEL`, `COURSEWEAVER_HOST`, and `COURSEWEAVER_PORT`. `COURSEWEAVER_COURSE_PATH` overrides the active `course_path` without editing JSON.
+
+Agent requests connect directly by default so unrelated shell proxy variables cannot redirect the configured API. Set `agent.use_system_proxy` to `true` only when the API must be reached through the operating system's proxy configuration.
 
 请将该文件视为密钥文件，在多人共用的设备上限制其文件权限。环境变量仍可作为容器或部署环境的可选覆盖项（例如用 `COURSEWEAVER_COURSE_PATH` 覆盖当前课程目录，无需修改 JSON），但不是日常使用的必要步骤。
 
@@ -138,6 +141,20 @@ python scripts/build_index.py path/to/my-course
 Set `course_path` in `config/settings.local.json` to that directory, or set the `COURSEWEAVER_COURSE_PATH` environment variable. The bundled indexer supports UTF-8 Markdown and text files. For PDF-based courses, convert handouts to UTF-8 text with an external tool such as `pdftotext` before building the index, so the core remains dependency-free.
 
 在 `config/settings.local.json` 中将 `course_path` 指向新目录，或设置 `COURSEWEAVER_COURSE_PATH` 环境变量。内置索引器支持 UTF-8 Markdown 和纯文本；对于以 PDF 为主的课程，可先用 `pdftotext` 等外部工具转成 UTF-8 文本再建索引，以保持核心零依赖。
+
+To display the original PDF while retaining extracted text for retrieval, keep `file` pointed at the UTF-8 text and add an optional `display_file` to the same manifest item:
+
+```json
+{
+  "id": "lecture-01",
+  "title": "Course Overview",
+  "file": "lectures/lecture-01.txt",
+  "display_file": "pdf/lectures/lecture01.pdf",
+  "retrieval_enabled": true
+}
+```
+
+配置 `display_file` 后，阅读器会直接显示原始 PDF；`file` 指向的文本只用于本地检索与导师引用。未配置 `display_file` 的资料仍使用内置的 Markdown/文本阅读器。
 
 ## Trying Stanford CS143 / 使用 Stanford CS143 尝试
 

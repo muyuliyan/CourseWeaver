@@ -30,12 +30,23 @@ class HttpProvider:
             method="POST",
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
         )
+        opener = (
+            urllib.request.build_opener()
+            if self.config.get("use_system_proxy", False)
+            else urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        )
         try:
-            with urllib.request.urlopen(request, timeout=self.config.get("timeout_seconds", 120)) as response:
+            with opener.open(request, timeout=self.config.get("timeout_seconds", 120)) as response:
                 return json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"Agent API request failed ({exc.code}): {detail[:500]}") from exc
+        except urllib.error.URLError as exc:
+            raise RuntimeError(
+                f"Cannot connect to the agent API at {base_url}. Check the API address, "
+                "network access, and proxy settings. Set agent.use_system_proxy to true "
+                "only when this connection requires the system proxy."
+            ) from exc
 
 
 class OpenAIResponsesProvider(HttpProvider):

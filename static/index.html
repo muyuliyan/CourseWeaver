@@ -13,7 +13,10 @@
   </header>
   <main>
     <aside class="sidebar">
-      <nav id="tabs" class="tabs" aria-label="Course material collections"></nav>
+      <div class="collection-switcher">
+        <label for="collection-select">Collection</label>
+        <select id="collection-select" aria-label="Course material collection"></select>
+      </div>
       <div id="materials" class="materials"></div>
     </aside>
     <section class="workspace" id="workspace">
@@ -37,6 +40,7 @@
           <div class="reader-actions">
             <button id="toc-toggle" class="toolbar-button" type="button" title="Table of contents" aria-label="Table of contents" aria-expanded="false" aria-controls="reader-toc"><span aria-hidden="true">≡</span><span class="button-label">Contents</span></button>
             <button id="type-toggle" class="toolbar-button type-toggle" type="button" title="Reading settings" aria-label="Reading settings" aria-expanded="false" aria-controls="type-panel"><span aria-hidden="true">Aa</span></button>
+            <button id="pdf-open" class="toolbar-button pdf-open" type="button" title="Open PDF in a new tab" aria-label="Open PDF in a new tab" hidden><span aria-hidden="true">↗</span><span class="button-label">Open PDF</span></button>
             <button id="tutor-toggle" class="toolbar-button tutor-toggle" type="button" title="Ask the tutor" aria-label="Ask the tutor" aria-expanded="false" aria-controls="tutor-panel"><span aria-hidden="true">✦</span><span class="button-label">Ask tutor</span></button>
             <button id="reader-close" class="icon-button reader-close" type="button" title="Close document" aria-label="Close document">×</button>
           </div>
@@ -60,6 +64,7 @@
           </div>
         </header>
         <div class="reader-progress" aria-hidden="true"><span id="reader-progress-bar"></span></div>
+        <iframe id="pdf-frame" class="pdf-frame" title="PDF document" hidden></iframe>
         <div class="reader-main">
           <nav id="reader-toc" class="reader-toc" aria-label="Document table of contents"></nav>
           <div class="reader-scroll" id="reader-scroll" tabindex="0">
