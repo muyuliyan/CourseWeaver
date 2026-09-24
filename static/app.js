@@ -324,6 +324,7 @@ async function openMaterial(item, button) {
   readerTitle.textContent = item.title;
   readerMeta.textContent = `${activeCollection().title} · ${displayFile}`;
   tutorContext.textContent = item.title;
+  document.body.classList.add('reading-active');
   workspace.classList.add('reading');
   workspace.classList.toggle('pdf-reading', isPdf);
   reader.classList.toggle('pdf-mode', isPdf);
@@ -372,6 +373,7 @@ async function openMaterial(item, button) {
 
 function closeReader({showMaterials = false} = {}) {
   saveReadingPosition();
+  document.body.classList.remove('reading-active');
   workspace.classList.remove('reading', 'tutor-open', 'pdf-reading');
   tutorToggle.setAttribute('aria-expanded', 'false');
   materials.querySelectorAll('.material.active').forEach(element => element.classList.remove('active'));
