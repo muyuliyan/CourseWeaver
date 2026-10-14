@@ -201,11 +201,11 @@ function renderMarkdownPage(text, container, tocEntries, usedIds, skipFirstHeadi
       }
       const displayLevel = level === 1 ? 2 : level;
       const node = make(`h${displayLevel}`);
-      const id = headingId(textContent, usedIds);
-      node.id = id;
+      const id = tocEntries ? headingId(textContent, usedIds) : null;
+      if (id) node.id = id;
       renderInline(node, textContent);
       container.append(node);
-      tocEntries.push({id, text: textContent, level: displayLevel});
+      if (tocEntries) tocEntries.push({id, text: textContent, level: displayLevel});
       continue;
     }
 
@@ -483,9 +483,13 @@ function updateReaderProgress() {
   readerTop.classList.toggle('visible', readerScroll.scrollTop > 480);
 }
 
-function addMessage(role, text, sources = []) {
+function addMessage(role, text, sources = [], markdown = true) {
   openTutor();
-  const item = make('article', `message ${role}`, text);
+  const item = make('article', `message ${role}`);
+  const content = make('div', 'message-content');
+  if (markdown) renderMarkdownPage(text, content, null, null, false);
+  else content.textContent = text;
+  item.append(content);
   if (sources.length) {
     const source = make('div', 'sources', `Sources: ${sources.map(entry => `${entry.id} p.${entry.page}`).join(' · ')}`);
     item.append(source);
@@ -499,7 +503,7 @@ async function ask(text) {
   addMessage('user', text);
   input.value = '';
   send.disabled = true;
-  const waiting = addMessage('assistant', 'Searching course materials...');
+  const waiting = addMessage('assistant', 'Searching course materials...', [], false);
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
