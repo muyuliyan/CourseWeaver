@@ -36,6 +36,7 @@ const tutorToggle = document.querySelector('#tutor-toggle');
 const tutorClose = document.querySelector('#tutor-close');
 const tutorContext = document.querySelector('#tutor-context');
 const libraryToggle = document.querySelector('#library-toggle');
+let tutorShortcutPressed = false;
 
 function make(tag, className, text) {
   const node = document.createElement(tag);
@@ -429,18 +430,29 @@ function toggleTutor() {
 }
 
 function handleTutorShortcut(event) {
-  if (event.ctrlKey && !event.altKey && !event.metaKey && event.code === 'Backquote') {
+  const isBackquote = event.code === 'Backquote' || event.key === '`' || event.key === '~';
+  if (event.ctrlKey && !event.altKey && !event.metaKey && isBackquote) {
     event.preventDefault();
     event.stopPropagation();
-    toggleTutor();
+    if (!tutorShortcutPressed && !event.repeat) {
+      tutorShortcutPressed = true;
+      toggleTutor();
+    }
     return true;
   }
   return false;
 }
 
+function releaseTutorShortcut(event) {
+  if (!event || event.code === 'Backquote' || event.key === '`' || event.key === '~' || event.key === 'Control') {
+    tutorShortcutPressed = false;
+  }
+}
+
 function bindPdfShortcut() {
   try {
     pdfFrame.contentWindow?.addEventListener('keydown', handleTutorShortcut, true);
+    pdfFrame.contentWindow?.addEventListener('keyup', releaseTutorShortcut, true);
   } catch (_) {
     // Native PDF viewers may isolate their internal document.
   }
@@ -525,12 +537,15 @@ pdfOpen.onclick = () => {
   }
 };
 pdfFrame.addEventListener('load', bindPdfShortcut);
+bindPdfShortcut();
 libraryToggle.onclick = () => main.classList.toggle('show-materials');
 readerTop.onclick = () => readerScroll.scrollTo({top: 0, behavior: 'smooth'});
 readerScroll.addEventListener('scroll', updateReaderProgress, {passive: true});
 window.addEventListener('beforeunload', saveReadingPosition);
 
-document.addEventListener('keydown', handleTutorShortcut, true);
+window.addEventListener('keydown', handleTutorShortcut, true);
+window.addEventListener('keyup', releaseTutorShortcut, true);
+window.addEventListener('blur', () => releaseTutorShortcut());
 
 document.addEventListener('click', event => {
   if (!typePanel.hidden && !typePanel.contains(event.target) && !typeToggle.contains(event.target)) {
