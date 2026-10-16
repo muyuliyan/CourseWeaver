@@ -449,6 +449,22 @@ function releaseTutorShortcut(event) {
   }
 }
 
+function handlePdfSaveShortcut(event) {
+  const isSaveShortcut = event.ctrlKey && !event.altKey && !event.metaKey
+    && (event.code === 'KeyS' || event.key?.toLowerCase() === 's');
+  if (!isSaveShortcut || !workspace.classList.contains('pdf-reading')) return;
+
+  // Keep the event's default action intact. Once the embedded viewer owns focus,
+  // the browser routes its native Save command to the edited PDF instead of the
+  // CourseWeaver HTML shell, preserving annotations supported by that viewer.
+  pdfFrame.focus({preventScroll: true});
+  try {
+    pdfFrame.contentWindow?.focus();
+  } catch (_) {
+    // The iframe element focus above is enough for isolated native PDF viewers.
+  }
+}
+
 function bindPdfShortcut() {
   try {
     pdfFrame.contentWindow?.addEventListener('keydown', handleTutorShortcut, true);
@@ -508,7 +524,11 @@ async function ask(text) {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({message: text, history: state.history})
+      body: JSON.stringify({
+        message: text,
+        history: state.history,
+        active_material_id: state.activeMaterial?.id || null
+      })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Request failed');
@@ -547,6 +567,7 @@ readerTop.onclick = () => readerScroll.scrollTo({top: 0, behavior: 'smooth'});
 readerScroll.addEventListener('scroll', updateReaderProgress, {passive: true});
 window.addEventListener('beforeunload', saveReadingPosition);
 
+window.addEventListener('keydown', handlePdfSaveShortcut, true);
 window.addEventListener('keydown', handleTutorShortcut, true);
 window.addEventListener('keyup', releaseTutorShortcut, true);
 window.addEventListener('blur', () => releaseTutorShortcut());

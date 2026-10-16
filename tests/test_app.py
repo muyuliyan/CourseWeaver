@@ -11,7 +11,7 @@ os.environ["COURSEWEAVER_CONFIG"] = str(
 
 import app
 from providers import OpenAICompatibleChatProvider, OpenAIResponsesProvider, create_provider
-from scripts.build_index import clean_text
+from scripts.build_index import clean_text, item_chunks
 
 
 class CourseWeaverTests(unittest.TestCase):
@@ -25,6 +25,30 @@ class CourseWeaverTests(unittest.TestCase):
 
     def test_retrieval_returns_course_evidence(self):
         results = app.retrieve("lexer tokens longest match")
+        self.assertTrue(results)
+        self.assertEqual(results[0]["source_id"], "lesson-01")
+
+    def test_terms_keep_document_numbers(self):
+        self.assertEqual(app.terms("Lecture 1")["1"], 1)
+
+    def test_document_references_resolve_ids_and_filenames(self):
+        items = [{
+            "id": "lecture-01",
+            "title": "Course Overview",
+            "file": "lectures/lecture-01.txt",
+            "display_file": "pdf/lectures/lecture01.pdf",
+        }]
+        for query in ("Lecture 1", "lecture01.pdf", "第一讲", "Course Overview"):
+            self.assertEqual(app.resolve_source_ids(query, items), {"lecture-01"})
+
+    def test_active_material_is_retrieved_for_contextual_question(self):
+        results = app.retrieve("What does this mean?", active_source_id="lesson-02")
+        self.assertTrue(results)
+        self.assertEqual(results[0]["source_id"], "lesson-02")
+
+    def test_follow_up_retrieval_uses_recent_user_history(self):
+        history = [{"role": "user", "content": "lexer tokens longest match"}]
+        results = app.retrieve("Explain that", history=history)
         self.assertTrue(results)
         self.assertEqual(results[0]["source_id"], "lesson-01")
 
@@ -56,6 +80,14 @@ class CourseWeaverTests(unittest.TestCase):
         cleaned = clean_text("# Parsing\n`1 + 2 * 3` and `a - b`")
         self.assertIn("1 + 2 * 3", cleaned)
         self.assertIn("a - b", cleaned)
+
+    def test_form_feed_chunks_keep_pdf_page_numbers(self):
+        item = {"id": "lecture-01", "title": "Overview", "file": "lecture-01.txt",
+                "display_file": "lecture01.pdf"}
+        collection = {"id": "lectures", "title": "Lectures"}
+        chunks = list(item_chunks(item, collection, "first page\fsecond page"))
+        self.assertEqual([chunk["page"] for chunk in chunks], [1, 2])
+        self.assertEqual(chunks[1]["display_file"], "lecture01.pdf")
 
 
 if __name__ == "__main__":

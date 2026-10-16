@@ -89,11 +89,11 @@ Open <http://127.0.0.1:8143>. Stop the foreground server with `Ctrl+C`.
 
 Choose a collection from the left sidebar, then open a course item. When an item defines `display_file`, CourseWeaver embeds the original PDF and uses the browser's native controls for page navigation, zoom, search, printing, and downloading. Items without `display_file` use the built-in Markdown/text reader.
 
-The desktop reader enters a focused layout that gives the document the available viewport. Select **Ask tutor** or press `Ctrl + \`` (the same physical key as `~`) to open a large conversation overlay over the reading area; press the shortcut again to close it and return to the unchanged PDF view. The shortcut also works when focus is inside the embedded PDF viewer. On narrow screens, the material list, document, and tutor appear as separate views to preserve usable reading space.
+The desktop reader enters a focused layout that gives the document the available viewport. Select **Ask tutor** or press `Ctrl + \`` (the same physical key as `~`) to open a large conversation overlay over the reading area; press the shortcut again to close it and return to the unchanged PDF view. The shortcut also works when focus is inside the embedded PDF viewer. While reading a PDF, `Ctrl + S` routes the save command to the native PDF viewer so it can export a PDF containing supported annotations and edits; the browser still asks where to save the file. On narrow screens, the material list, document, and tutor appear as separate views to preserve usable reading space.
 
 在左侧选择资料分类并打开课程内容。配置了 `display_file` 的项目会直接嵌入原始 PDF，并使用浏览器自带的翻页、缩放、搜索、打印和下载功能；未配置 `display_file` 的项目则使用内置 Markdown/文本阅读器。
 
-桌面端进入资料后会切换到专注阅读布局。点击 **Ask tutor** 或按 `Ctrl + \``（与 `~` 相同的物理按键）可以在阅读区上覆盖打开大尺寸对话窗口，再按一次即可关闭并回到状态不变的 PDF；即使焦点位于嵌入的 PDF 查看器内，快捷键也能生效。窄屏设备会分别显示资料目录、文档和导师，以保留足够的阅读空间。
+桌面端进入资料后会切换到专注阅读布局。点击 **Ask tutor** 或按 `Ctrl + \``（与 `~` 相同的物理按键）可以在阅读区上覆盖打开大尺寸对话窗口，再按一次即可关闭并回到状态不变的 PDF；即使焦点位于嵌入的 PDF 查看器内，快捷键也能生效。阅读 PDF 时按 `Ctrl + S` 会把保存操作交给原生 PDF 查看器，以便导出包含其支持的标注和编辑内容的 PDF；浏览器仍会要求选择保存位置。窄屏设备会分别显示资料目录、文档和导师，以保留足够的阅读空间。
 
 ## Agent providers / Agent 供应商
 
